@@ -4,6 +4,22 @@ function Maze (tileSize, map) {
   this.tiles = []
   this.tileSize = tileSize || 64
 
+  function removeDoubles (ray) {
+    'use strict'
+    for(let i = 0; i < ray.length; i += 1) {
+      for(let j = 0; j < ray.length; j += 1) {
+        if(i === j) {
+          continue
+        }
+        if(ray[j] === ray[i]) {
+          ray.splice(i, 1)
+          i--
+        }
+      }
+    }
+
+    return ray
+  }
 
   this.mapValues = function (squares) {
 
@@ -16,25 +32,11 @@ function Maze (tileSize, map) {
       if ( square % this.cols !== 0) {
         // not left edge
         indices.push(square - 1)
-        // if (notTop) {
-        //   indices.push(square - this.stride - 1)
-        // }
-        //
-        // if (notBottom) {
-        //   indices.push(square + this.stride - 1)
-        // }
       }
 
       if ((square + 1) % this.cols !== 0) {
           // not right edge
         indices.push(square + 1)
-        // if (notTop) {
-        //   indices.push(square - this.stride + 1)
-        // }
-        //
-        // if (notBottom) {
-        //   indices.push(square + this.stride + 1)
-        // }
       }
 
       if (notTop) {
@@ -47,7 +49,7 @@ function Maze (tileSize, map) {
 
     })
 
-    return indices
+    return removeDoubles(indices)
   }
 
   this.initialize = function (width, height, cheeseSquare) {
@@ -67,35 +69,35 @@ function Maze (tileSize, map) {
     for (let i = 0; i < this.rows; i += 1) {
       for (let j = 0; j < this.cols; j += 1) {
         let tileNum = (i * this.cols) + j;
-        this.tiles.push(new Tile(tileNum, this.tileSize, (map[i]===1)))
+        console.log(i , map[i] === 1)
+        this.tiles.push(new Tile(tileNum, this.tileSize, (map[i * this.cols + j] === 1 )))
       }
     }
-
+    
     var set = [cheeseSquare]
     this.tiles[cheeseSquare].grade(0)
     var val = 1
-    var ungraded = this.tiles.filter(tile => !tile.graded)
+    var ungraded = this.tiles.filter(tile => (!tile.graded && !tile.wall))
 
     var start = Date.now()
     while(ungraded.length > 0) {
-      set = this.mapValues(set) //.map(ind => ) // .filter(ind => this.tiles[ind].wall === false)
+      set = this.mapValues(set).filter(ind => this.tiles[ind].wall === false)
       set.forEach(tile => {
         if (!this.tiles[tile].graded) {
           this.tiles[tile].grade(val)
         }
       })
-      ungraded = ungraded.filter(tile => !tile.graded)
+      ungraded = ungraded.filter(tile => (!tile.graded && !tile.wall))
       ++val
     }
     console.log('took ' + (Date.now() - start) + ' milliseconds to process' )
-
+    //
     console.log(this.tiles)
   }
 
   this.display = function () {
     for (let i = 0; i < this.tiles.length; i += 1) {
       let tile = this.tiles[i]
-      console.log(i, (i % this.cols) * this.tileSize )
       let pos = {
         x: (i % this.cols) * this.tileSize,
         y: Math.floor(i / this.cols) * this.tileSize

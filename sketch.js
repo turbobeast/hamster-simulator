@@ -18,13 +18,7 @@ function setup() {
   createCanvas(mazeWidth, mazeHeight)
   maze = new Maze(tileSize, mazeMap)
   maze.initialize(mazeWidth, mazeHeight, 23)
-  // maze.initialize(108, 108, 7)
-  // maze.initialize(108, 108, 8)
-  // maze.initialize(108, 108, 3)
-  // maze.initialize(108, 108, 4)
-
-  // maze.initialize(108, 108, 5)
-  // maze.display()
+  
 }
 
 function draw() {

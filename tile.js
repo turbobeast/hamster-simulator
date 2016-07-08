@@ -17,7 +17,9 @@ function Tile (num, width, wall) {
     rect(pos.x, pos.y, this.width, this.width)
     textSize(32);
     fill(255)
-    text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
+    if (this.value) {
+      text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
+    }
   }
 
   this.grade = function (val) {

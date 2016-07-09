@@ -21,7 +21,7 @@ function Maze (tileSize, map) {
     return ray
   }
 
-  this.mapValues = function (squares) {
+  this.findBuddies = function (squares) {
 
     let indices = [];
     squares.forEach(square => {
@@ -53,14 +53,14 @@ function Maze (tileSize, map) {
   }
 
   this.initialize = function (width, height, cheeseSquare) {
-
     if (width % this.tileSize !== 0) {
-      console.warn('tile size %s does not divide evenly into width %s', this.tileSize, width)
+      throw new Error('tile size %s does not divide evenly into width %s', this.tileSize, width)
     }
 
     if (height % this.tileSize !== 0) {
-      console.warn('tile size %s does not divide evenly into height %s', this.tileSize, height)
+      throw new Error('tile size %s does not divide evenly into height %s', this.tileSize, height)
     }
+
     this.cols = (width / this.tileSize)
     this.rows = (height / this.tileSize)
 
@@ -69,19 +69,18 @@ function Maze (tileSize, map) {
     for (let i = 0; i < this.rows; i += 1) {
       for (let j = 0; j < this.cols; j += 1) {
         let tileNum = (i * this.cols) + j;
-        console.log(i , map[i] === 1)
         this.tiles.push(new Tile(tileNum, this.tileSize, (map[i * this.cols + j] === 1 )))
       }
     }
-    
+
     var set = [cheeseSquare]
     this.tiles[cheeseSquare].grade(0)
     var val = 1
     var ungraded = this.tiles.filter(tile => (!tile.graded && !tile.wall))
 
-    var start = Date.now()
-    while(ungraded.length > 0) {
-      set = this.mapValues(set).filter(ind => this.tiles[ind].wall === false)
+    // var start = Date.now()
+    while(ungraded.length > 0 ) {
+      set = this.findBuddies(set).filter(ind => this.tiles[ind].wall === false)
       set.forEach(tile => {
         if (!this.tiles[tile].graded) {
           this.tiles[tile].grade(val)
@@ -89,10 +88,13 @@ function Maze (tileSize, map) {
       })
       ungraded = ungraded.filter(tile => (!tile.graded && !tile.wall))
       ++val
+
+      if (val > 10000) {
+        throw new Error('infinite while loop, theres no way the maze is that big!')
+      }
     }
-    console.log('took ' + (Date.now() - start) + ' milliseconds to process' )
-    //
-    console.log(this.tiles)
+    // console.log('took ' + (Date.now() - start) + ' milliseconds to process' )
+    // console.log(this.tiles)
   }
 
   this.display = function () {

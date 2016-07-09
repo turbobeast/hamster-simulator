@@ -8,18 +8,18 @@ function Tile (num, width, wall) {
   this.value = Math.MAX_SAFE_INTEGER
 
   this.display = function (pos) {
-    if (this.wall) {
-      fill(25,2,2)
+    if (!this.wall) {
+      fill(25,12,52, 50)
     } else {
-      fill(254,2,2)
+      fill(149,97,224, 50)
     }
 
     rect(pos.x, pos.y, this.width, this.width)
-    textSize(32);
-    fill(255)
-    if (this.value) {
-      text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
-    }
+    // textSize(32);
+    // fill(198,48,229)
+    // if (this.value) {
+    //   text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
+    // }
   }
 
   this.grade = function (val) {

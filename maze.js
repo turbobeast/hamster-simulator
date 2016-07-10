@@ -69,13 +69,13 @@ function Maze (tileSize, map) {
     for (let i = 0; i < this.rows; i += 1) {
       for (let j = 0; j < this.cols; j += 1) {
         let tileNum = (i * this.cols) + j;
-        this.tiles.push(new Tile(tileNum, this.tileSize, (map[i * this.cols + j] === 1 )))
+        this.tiles.push(new Tile(tileNum, this.tileSize, (map[i * this.cols + j] === 1 ), tileNum === cheeseSquare))
       }
     }
 
     var set = [cheeseSquare]
-    this.tiles[cheeseSquare].grade(0)
-    var val = 1
+    this.tiles[cheeseSquare].grade(1)
+    var val = 2
     var ungraded = this.tiles.filter(tile => (!tile.graded && !tile.wall))
 
     // var start = Date.now()

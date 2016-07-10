@@ -2,7 +2,6 @@ function Hamster (maze, start, turns) {
   'use strict'
 
   const stride = maze.stride
-
   const directions = {
     LEFT: -1,
     RIGHT: 1,
@@ -10,16 +9,17 @@ function Hamster (maze, start, turns) {
     DOWN: stride
   }
 
+  this.speed = 40 + random(100)
   this.currentTurn = 0
   this.currentSquare = start
+  this.stuck = false
+  this.col = {
+    r: 200 + random(20),
+    g: 100 + random(100),
+    b: 100 + random(50)
+  }
 
   this.turns = turns || {}
-
-  this.turns[this.currentSquare] = directions.UP
-  // { square: int, direction: int}
-
-  this.currentDirection = this.turns[this.currentSquare]
-
 
   function squarePos (square) {
     return {
@@ -30,7 +30,7 @@ function Hamster (maze, start, turns) {
 
   this.pos = squarePos(this.currentSquare)
 
-  this.chooseDirection = function () {
+  this.getPotentialTurns = function () {
     let potentialTurns = []
     let wrongWays = [this.backwards()]
 
@@ -64,15 +64,15 @@ function Hamster (maze, start, turns) {
         }
       }
     }
-    // console.log(potentialTurns)
+
     if (potentialTurns.length < 1) {
       return false
     }
-    return potentialTurns[floor(random(potentialTurns.length))]
+
+    return potentialTurns
   }
 
   this.backwards = function () {
-    // console.log(this.currentDirection)
     switch (this.currentDirection) {
       case directions.UP:
         return directions.DOWN
@@ -86,18 +86,9 @@ function Hamster (maze, start, turns) {
   }
 
   this.display = function () {
-    fill(221,131,44)
-    console.log(this.pos)
+    fill(this.col.r, this.col.g, this.col.b)
     ellipse(this.pos.x, this.pos.y, 24, 24)
   }
-
-  // this.decideDirection = function (tile, maze) {
-  //   this.currentTurn += 1
-  //   if (this.currentTurn >= this.turns.length) {
-  //     // need a new turn
-  //     // get available turns
-  //   }
-  // }
 
   this.onArrive = function (square) {
     this.currentTurn += 1
@@ -105,12 +96,18 @@ function Hamster (maze, start, turns) {
     this.pos = squarePos(this.currentSquare)
     let dir = false
 
-    if (this.turns[this.currentSquare] && random() > 0.1) {
+    if (this.turns[this.currentSquare]) {
       dir = this.turns[this.currentSquare]
     } else {
-      dir = this.chooseDirection(square);
-      if (dir) {
-        this.turns[this.currentSquare] = dir
+      let potentialTurns = this.getPotentialTurns()
+
+      if (potentialTurns) {
+        dir = potentialTurns[floor(random(potentialTurns.length))]
+        if (potentialTurns.length > 1) {
+          // intersection
+          this.turns[this.currentSquare] = dir
+        }
+
       }
     }
 
@@ -118,22 +115,21 @@ function Hamster (maze, start, turns) {
     if (dir) {
       this.gotoSquare((this.currentSquare + dir))
     } else {
-      console.log('my body will take me no further!')
-      console.log(this.turns)
-      console.log(this.currentSquare)
-      console.log(maze.tiles[this.currentSquare].value)
+      this.stuck = true
     }
+  }
 
+  this.calcFitness = function () {
+    const squareVal = maze.tiles[this.currentSquare].value
+    return Math.round((1 / (squareVal * squareVal * squareVal)) * 1000000)
   }
 
   this.gotoSquare = function (nextSquare) {
     var squareTween = new Tween({
-      duration: 100,
+      duration: this.speed,
       startPos: this.pos,
       targetPos: squarePos(nextSquare),
       update: function (pos) {
-        //console.log(this.pos)
-        // this.display()
         this.pos = pos
       }.bind(this),
       onComplete: this.onArrive.bind(this, nextSquare)
@@ -141,5 +137,4 @@ function Hamster (maze, start, turns) {
   }
 
   this.onArrive(this.currentSquare)
-
 }

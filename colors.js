@@ -21,11 +21,11 @@ function colorPool (colors) {
 }
 
 var COLORS = {};
-
-COLORS.hammies = []
-COLORS.hammies.push({ r: 255, g: 255, b: 255 })
-COLORS.hammies.push({ r: 111, g: 111, b: 111 })
-COLORS.hammies.push({ r: 215, g: 214, b: 191 })
-
-COLORS.hammies.push({ r: 134, g: 106, b: 90 })
+COLORS.hammies = colorPool('#5B2B27,#4A231A,#863815,#763F23,#724934,#95481E,#8F734E,#615744,#509186,#5C9163,#92C781,#A7BA79,#757E52,#5A796F,#545B55'.split(','))
+// COLORS.hammies = []
+// COLORS.hammies.push({ r: 255, g: 255, b: 255 })
+// COLORS.hammies.push({ r: 111, g: 111, b: 111 })
+// COLORS.hammies.push({ r: 215, g: 214, b: 191 })
+//
+// COLORS.hammies.push({ r: 134, g: 106, b: 90 })
 COLORS.mazeBlues = colorPool('#3D66A8,#3B5992,#324974,#344C73,#2F4056,#2D3344'.split(','))

@@ -10,6 +10,7 @@ function Hamster (maze, start, dna) {
   // for every turn the tile number is the key
   // and the direction is the value
   this.turns = dna.turns || {}
+  this.patchCol = COLORS.hammies[floor(random(COLORS.hammies.length))]
 
   this.patch = dna.patch || (random() > 0.5) ? true : false
 
@@ -79,7 +80,7 @@ function Hamster (maze, start, dna) {
     arc(0, 12, 40, 34, 0, TWO_PI)
 
     if (this.patch) {
-      fill(187, 150, 77)
+      fill(this.patchCol.r, this.patchCol.g, this.patchCol.b)
       arc(8, 10, 14, 14, 0, TWO_PI)
     }
 

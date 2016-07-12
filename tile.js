@@ -7,9 +7,14 @@ function Tile (num, width, wall, cheese) {
   this.graded = false
   this.value = Math.MAX_SAFE_INTEGER
 
-  this.wallCol = COLORS.mazeBlues[5]
-  this.pathCol = COLORS.mazeBlues[1]
-  this.outLine = COLORS.mazeBlues[0]
+  // this.wallCol = COLORS.mazeBlues[5]
+  // this.pathCol = COLORS.mazeBlues[1]
+  // this.outLine = COLORS.mazeBlues[0]
+
+  this.wallCol = COLORS.hammies[2]
+  this.pathCol = COLORS.hammies[9]
+  this.outLine = COLORS.hammies[9]
+
 
   this.display = function (pos) {
 
@@ -24,6 +29,7 @@ function Tile (num, width, wall, cheese) {
     if (cheese) {
 
       // side wall
+      noStroke()
       fill(245, 192, 56)
       beginShape()
       vertex(pos.x + 8, pos.y + 26)

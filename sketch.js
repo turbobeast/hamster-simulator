@@ -17,33 +17,29 @@ function setup() {
   for (let i = 0; i < numHams; i += 1) {
     hamsters.push(new Hamster(maze, mazeMap.start, {}))
   }
-
-  maze.display()
-}
-
-function sortHamsters(hams) {
-  'use strict'
-  let length = hams.length
-  for (let i = 0; i < length; i += 1) {
-    let tmp = hams[i]
-    for(var j = i -1; j >= 0 && hams[j].calcFitness() < tmp.calcFitness(); j -= 1) {
-        hams[j+1] = hams[j]
-    }
-
-    hams[j+1] = tmp
-  }
-  return hams
 }
 
 
 function restartHamsters () {
+  let genePool = [].concat(hamsters)
+  let papa = hamsters[0]
+  for (let i = 1; i < numHams; i += 1) {
+    // square 1 is the square with the cheese on
+    // calcFitness only
+    if (maze.tiles[hamsters[i].currentSquare].value === 1) {
+      papa = hamsters[i]
+      break
+    } else if (hamsters[i].calcFitness() < papa.calcFitness()) {
+      papa = hamsters[i]
+    }
+  }
 
-  let genePool = sortHamsters([].concat(hamsters))
   hamsters = []
 
   for(let i = 0; i < numHams; i += 1) {
-    let papa = genePool[genePool.length-1]
+
     let turnsCopy = {}
+    let mama = genePool[floor(random(genePool.length))]
     for (let turn in papa.turns) {
       turnsCopy[turn] = papa.turns[turn]
     }
@@ -59,14 +55,13 @@ function restartHamsters () {
     if (maze.tiles[papa.currentSquare].value !== 1) {
       delete turnsCopy[minTurn]
     }
-    hamsters.push(new Hamster(maze, mazeMap.start, Object.assign({}, {turns: turnsCopy})))
+    hamsters.push(new Hamster(maze, mazeMap.start, Object.assign(mama, {turns: turnsCopy})))
   }
 
   generation += 1
 }
 
 function draw() {
-
   maze.display()
   let done = true
   for (let i = 0; i < numHams; i += 1) {

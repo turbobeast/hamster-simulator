@@ -1,7 +1,7 @@
 function Hamster (maze, start, dna) {
   'use strict'
 
-  this.speed = dna.speed || 80 + random(100)
+  this.speed = 60 + random(120)
   this.currentTurn = 0
   this.currentSquare = start
   this.stuck = false
@@ -132,18 +132,14 @@ function Hamster (maze, start, dna) {
 
   this.calcFitness = function () {
 
-    // let minTurn = null
     let minTurnVal = maze.tiles[mazeMap.start].value
     for (const turn in this.turns) {
       if (maze.tiles[turn].value < minTurnVal) {
         minTurnVal = maze.tiles[turn].value
-        // minTurn = turn
       }
     }
 
     return minTurnVal
-    // const squareVal = maze.tiles[this.currentSquare].value
-    // return squareVal // Math.round((1 / (squareVal * squareVal * squareVal)) * 1000000)
   }
 
   this.gotoSquare = function (nextSquare) {

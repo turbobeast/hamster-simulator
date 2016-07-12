@@ -1,17 +1,21 @@
-function Hamster (maze, start, turns) {
+function Hamster (maze, start, dna) {
   'use strict'
 
-  this.speed = 40 + random(100)
+  this.speed = dna.speed || 80 + random(100)
   this.currentTurn = 0
   this.currentSquare = start
   this.stuck = false
-  this.col = {
-    r: 200 + random(20),
-    g: 100 + random(100),
-    b: 100 + random(50)
+  this.col = dna.col || COLORS.hammies[floor(random(COLORS.hammies.length))]
+
+  this.patch = dna.patch || (random() > 0.5) ? true : false
+
+  // this.points.push();
+
+  function toRads (deg) {
+    return deg / 180 * PI;
   }
 
-  this.turns = turns || {}
+  this.turns = dna.turns || {}
 
   function squarePos (square) {
     return {
@@ -35,9 +39,66 @@ function Hamster (maze, start, turns) {
     }
   }
 
-  this.display = function () {
+  this.rotation = function () {
+    switch (this.currentDirection) {
+      case maze.directions.UP:
+        return toRads(180)
+      case maze.directions.DOWN:
+        return toRads(0)
+      case maze.directions.RIGHT:
+        return toRads(-90)
+      case maze.directions.LEFT:
+        return toRads(90)
+    }
+  }
+
+  this.drawHamster = function (x, y, rotation) {
+    push()
+    translate(x, y)
+    rotate(rotation)
+
     fill(this.col.r, this.col.g, this.col.b)
-    ellipse(this.pos.x, this.pos.y, 24, 24)
+    noStroke()
+
+    // body
+    arc(0, 0, 22, 28, toRads(180), toRads(0))
+
+    // ears
+    arc(18, 2, 12, 12, 0, TWO_PI)
+    arc(-18, 2, 12, 12, 0, TWO_PI)
+    fill(253, 146, 200) // pink
+
+    arc(18, 2, 8, 8, 0, TWO_PI)
+    arc(-18, 2, 8, 8, 0, TWO_PI)
+
+    fill(this.col.r, this.col.g, this.col.b)
+
+    // head
+    arc(0, 12, 40, 34, 0, TWO_PI)
+
+    if (this.patch) {
+      fill(187, 150, 77)
+      arc(8, 10, 14, 14, 0, TWO_PI)
+    }
+
+    // teeth
+    fill(255)
+    rect(-2, 18, 4, 5)
+
+    // nose
+    fill(253, 146, 200)
+    arc(0, 16, 4, 4, 0, TWO_PI)
+
+    fill(0)
+
+    // eyes
+    arc(10, 12, 8, 8, 0, TWO_PI)
+    arc(-10, 12, 8, 8, 0, TWO_PI)
+    pop()
+  }
+
+  this.display = function () {
+    this.drawHamster(this.pos.x, this.pos.y, this.rotation())
   }
 
   this.onArrive = function (square) {
@@ -60,17 +121,29 @@ function Hamster (maze, start, turns) {
       }
     }
 
-    this.currentDirection = dir
+
     if (dir) {
       this.gotoSquare((this.currentSquare + dir))
+      this.currentDirection = dir
     } else {
       this.stuck = true
     }
   }
 
   this.calcFitness = function () {
-    const squareVal = maze.tiles[this.currentSquare].value
-    return Math.round((1 / (squareVal * squareVal * squareVal)) * 1000000)
+
+    // let minTurn = null
+    let minTurnVal = maze.tiles[mazeMap.start].value
+    for (const turn in this.turns) {
+      if (maze.tiles[turn].value < minTurnVal) {
+        minTurnVal = maze.tiles[turn].value
+        // minTurn = turn
+      }
+    }
+
+    return minTurnVal
+    // const squareVal = maze.tiles[this.currentSquare].value
+    // return squareVal // Math.round((1 / (squareVal * squareVal * squareVal)) * 1000000)
   }
 
   this.gotoSquare = function (nextSquare) {

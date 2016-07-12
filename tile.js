@@ -7,27 +7,44 @@ function Tile (num, width, wall, cheese) {
   this.graded = false
   this.value = Math.MAX_SAFE_INTEGER
 
+  this.wallCol = COLORS.mazeBlues[5]
+  this.pathCol = COLORS.mazeBlues[1]
+  this.outLine = COLORS.mazeBlues[0]
+
   this.display = function (pos) {
 
-
-
+    stroke(this.outLine.r,this.outLine.g,this.outLine.b)
     if (!this.wall) {
-      fill(25,12,52, 50)
+      fill(this.pathCol.r, this.pathCol.g, this.pathCol.b)
     } else {
-      fill(149,97,224, 50)
+      fill(this.wallCol.r, this.wallCol.g, this.wallCol.b)
     }
     rect(pos.x, pos.y, this.width, this.width)
 
     if (cheese) {
+
+      // side wall
       fill(245, 192, 56)
-      triangle(pos.x + 2,
-               pos.y + this.width-2,
+      beginShape()
+      vertex(pos.x + 8, pos.y + 26)
+      vertex(pos.x + 8, pos.y + 40)
+      vertex(pos.x + 45, pos.y + 35)
+      vertex(pos.x + 45, pos.y + 15)
+      endShape()
 
-               pos.x + this.width * 0.5,
-               pos.y+2,
 
-               pos.x + this.width-2,
-               pos.y + this.width-2)
+      fill(255, 232, 112)
+      beginShape()
+      vertex(pos.x + 7, pos.y + 27)
+      vertex(pos.x + 32, pos.y + 5)
+      vertex(pos.x + 45, pos.y + 15)
+      endShape()
+      noStroke()
+      fill(255, 232, 112)
+      arc(pos.x + 32, pos.y + 27, 5, 4, 0, TWO_PI)
+
+      fill(255, 232, 112)
+      arc(pos.x + 20, pos.y + 33, 3, 3, 0, TWO_PI)
     }
 
     textSize(12);

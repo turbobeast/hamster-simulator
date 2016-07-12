@@ -47,11 +47,11 @@ function Tile (num, width, wall, cheese) {
       arc(pos.x + 20, pos.y + 33, 3, 3, 0, TWO_PI)
     }
 
-    textSize(12);
-    fill(198,48,229)
-    if (this.value) {
-      text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
-    }
+    // textSize(12);
+    // fill(198,48,229)
+    // if (this.value) {
+    //   text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
+    // }
   }
 
   this.grade = function (val) {

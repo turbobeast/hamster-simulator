@@ -26,7 +26,7 @@ function sortHamsters(hams) {
   let length = hams.length
   for (let i = 0; i < length; i += 1) {
     let tmp = hams[i]
-    for(var j = i -1; j >= 0 && hams[j].calcFitness() > tmp.calcFitness(); j -= 1) {
+    for(var j = i -1; j >= 0 && hams[j].calcFitness() < tmp.calcFitness(); j -= 1) {
         hams[j+1] = hams[j]
     }
 
@@ -42,7 +42,7 @@ function restartHamsters () {
   hamsters = []
 
   for(let i = 0; i < numHams; i += 1) {
-    let papa = genePool[floor(random(genePool.length))]
+    let papa = genePool[genePool.length-1]
     let turnsCopy = {}
     for (let turn in papa.turns) {
       turnsCopy[turn] = papa.turns[turn]
@@ -58,11 +58,8 @@ function restartHamsters () {
 
     if (maze.tiles[papa.currentSquare].value !== 1) {
       delete turnsCopy[minTurn]
-    } else {
-      console.log('made it')
     }
-
-    hamsters.push(new Hamster(maze, mazeMap.start, Object.assign({}, papa, {turns: turnsCopy})))
+    hamsters.push(new Hamster(maze, mazeMap.start, Object.assign({}, {turns: turnsCopy})))
   }
 
   generation += 1

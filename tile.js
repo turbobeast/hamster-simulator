@@ -29,12 +29,12 @@ function Tile (num, width, wall, cheese) {
                pos.x + this.width-2,
                pos.y + this.width-2)
     }
-    
-    // textSize(12);
-    // fill(198,48,229)
-    // if (this.value) {
-    //   text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
-    // }
+
+    textSize(12);
+    fill(198,48,229)
+    if (this.value) {
+      text(this.value, pos.x + this.width * 0.4, pos.y + this.width * 0.6)
+    }
   }
 
   this.grade = function (val) {

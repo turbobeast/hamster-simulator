@@ -7,12 +7,12 @@ var tileSize = 44
 var mazeWidth = (tileSize * mazeMap.cols)
 var mazeHeight = (tileSize * mazeMap.rows)
 var hamsters = []
-var numHams = 1
+var numHams = 2
 var generation = 1
 
 function setup() {
   createCanvas(mazeWidth, mazeHeight)
-  maze = new Maze(tileSize, mazeMap.map)
+  maze = new Maze(tileSize, mazeMap)
   maze.initialize(mazeWidth, mazeHeight, mazeMap.cheese)
   for (let i = 0; i < numHams; i += 1) {
     hamsters.push(new Hamster(maze, mazeMap.start))
@@ -25,8 +25,6 @@ var checked = false
 function restartHamsters () {
 
   const genePool = []
-
-
 
   let max = 0
   for (let i = 0; i < numHams; i += 1) {

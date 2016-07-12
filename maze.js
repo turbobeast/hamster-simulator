@@ -1,8 +1,57 @@
-function Maze (tileSize, map) {
+function Maze (tileSize, mazeMap) {
   'use strict'
 
   this.tiles = []
   this.tileSize = tileSize || 64
+  this.mazeMap = mazeMap
+  this.stride = this.mazeMap.cols
+
+  let map = mazeMap.map
+
+  this.directions = {
+    LEFT: -1,
+    RIGHT: 1,
+    UP: -this.stride,
+    DOWN: this.stride
+  }
+
+  this.getPotentialTurns = function (square) {
+
+    let potentialTurns = []
+    let wrongWays = []
+
+    var squareRow = Math.floor(square / this.cols)
+    var top = (squareRow === 0)
+    var bottom = (squareRow === this.rows - 1)
+
+    if ( square % this.cols === 0) {
+      // left edge
+      wrongWays.push(this.directions.LEFT)
+    }
+
+    if ((square + 1) % this.cols === 0) {
+      // right edge
+      wrongWays.push(this.directions.RIGHT)
+    }
+
+    if (top) {
+      wrongWays.push(this.directions.UP)
+    }
+
+    if (bottom) {
+      wrongWays.push(this.directions.DOWN)
+    }
+
+    for (let dir in this.directions) {
+      if (wrongWays.indexOf(this.directions[dir]) === -1) {
+        let possibleSquare = this.tiles[square + this.directions[dir]]
+        if (possibleSquare && possibleSquare.wall !== true) {
+          potentialTurns.push(this.directions[dir])
+        }
+      }
+    }
+    return potentialTurns
+  }
 
   function removeDoubles (ray) {
     'use strict'
@@ -22,33 +71,10 @@ function Maze (tileSize, map) {
   }
 
   this.findBuddies = function (squares) {
-
-    let indices = [];
+    let indices = []
     squares.forEach(square => {
-
-      var squareRow = Math.floor(square / this.cols)
-      var notTop = (squareRow > 0)
-      var notBottom = (squareRow < this.rows - 1)
-      if ( square % this.cols !== 0) {
-        // not left edge
-        indices.push(square - 1)
-      }
-
-      if ((square + 1) % this.cols !== 0) {
-          // not right edge
-        indices.push(square + 1)
-      }
-
-      if (notTop) {
-        indices.push(square - this.stride)
-      }
-
-      if (notBottom) {
-        indices.push(square + this.stride)
-      }
-
+      indices = this.getPotentialTurns(square).map(turn => turn + square).concat(indices)
     })
-
     return removeDoubles(indices)
   }
 

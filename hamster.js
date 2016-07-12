@@ -1,14 +1,6 @@
 function Hamster (maze, start, turns) {
   'use strict'
 
-  const stride = maze.stride
-  const directions = {
-    LEFT: -1,
-    RIGHT: 1,
-    UP: -stride,
-    DOWN: stride
-  }
-
   this.speed = 40 + random(100)
   this.currentTurn = 0
   this.currentSquare = start
@@ -30,58 +22,16 @@ function Hamster (maze, start, turns) {
 
   this.pos = squarePos(this.currentSquare)
 
-  this.getPotentialTurns = function () {
-    let potentialTurns = []
-    let wrongWays = [this.backwards()]
-
-    var squareRow = Math.floor(this.currentSquare / maze.cols)
-    var top = (squareRow === 0)
-    var bottom = (squareRow === this.rows - 1)
-
-    if ( this.currentSquare % maze.cols === 0) {
-      // left edge
-      wrongWays.push(directions.LEFT)
-    }
-
-    if ((this.currentSquare + 1) % maze.cols === 0) {
-      // right edge
-      wrongWays.push(directions.RIGHT)
-    }
-
-    if (top) {
-      wrongWays.push(directions.UP)
-    }
-
-    if (bottom) {
-      wrongWays.push(directions.DOWN)
-    }
-
-    for (let dir in directions) {
-      if (wrongWays.indexOf(directions[dir]) === -1) {
-        let possibleSquare = maze.tiles[this.currentSquare + directions[dir]]
-        if (possibleSquare && possibleSquare.wall !== true) {
-          potentialTurns.push(directions[dir])
-        }
-      }
-    }
-
-    if (potentialTurns.length < 1) {
-      return false
-    }
-
-    return potentialTurns
-  }
-
   this.backwards = function () {
     switch (this.currentDirection) {
-      case directions.UP:
-        return directions.DOWN
-      case directions.DOWN:
-        return directions.UP
-      case directions.RIGHT:
-        return directions.LEFT
-      case directions.LEFT:
-        return directions.RIGHT
+      case maze.directions.UP:
+        return maze.directions.DOWN
+      case maze.directions.DOWN:
+        return maze.directions.UP
+      case maze.directions.RIGHT:
+        return maze.directions.LEFT
+      case maze.directions.LEFT:
+        return maze.directions.RIGHT
     }
   }
 
@@ -99,8 +49,7 @@ function Hamster (maze, start, turns) {
     if (this.turns[this.currentSquare]) {
       dir = this.turns[this.currentSquare]
     } else {
-      let potentialTurns = this.getPotentialTurns()
-
+      let potentialTurns = maze.getPotentialTurns(this.currentSquare).filter(turn => turn !== this.backwards())
       if (potentialTurns) {
         dir = potentialTurns[floor(random(potentialTurns.length))]
         if (potentialTurns.length > 1) {

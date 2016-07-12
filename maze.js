@@ -8,6 +8,7 @@ function Maze (tileSize, mazeMap) {
 
   let map = mazeMap.map
 
+  // offsets to adjacent tiles
   this.directions = {
     LEFT: -1,
     RIGHT: 1,
@@ -75,6 +76,7 @@ function Maze (tileSize, mazeMap) {
     squares.forEach(square => {
       indices = this.getPotentialTurns(square).map(turn => turn + square).concat(indices)
     })
+    // this gets way out of hand unless we remove doubles every time
     return removeDoubles(indices)
   }
 
@@ -105,6 +107,9 @@ function Maze (tileSize, mazeMap) {
     var ungraded = this.tiles.filter(tile => (!tile.graded && !tile.wall))
 
     // var start = Date.now()
+
+    // loop through all of the tiles and assign them values based on how many loops it took to reach them
+    // therefore how far away they are from the cheese
     while(ungraded.length > 0 ) {
       set = this.findBuddies(set).filter(ind => this.tiles[ind].wall === false)
       set.forEach(tile => {

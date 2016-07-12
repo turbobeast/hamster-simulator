@@ -1,21 +1,21 @@
 function Hamster (maze, start, dna) {
   'use strict'
 
-  this.speed = 60 + random(120)
-  this.currentTurn = 0
+  this.speed = 60 + random(120) // how fast hasmter moves from tile to tile
   this.currentSquare = start
   this.stuck = false
   this.col = dna.col || COLORS.hammies[floor(random(COLORS.hammies.length))]
+  // keeping track of which direction the hamster turned at each intersection is
+  // how this thing works
+  // for every turn the tile number is the key
+  // and the direction is the value
+  this.turns = dna.turns || {}
 
   this.patch = dna.patch || (random() > 0.5) ? true : false
-
-  // this.points.push();
 
   function toRads (deg) {
     return deg / 180 * PI;
   }
-
-  this.turns = dna.turns || {}
 
   function squarePos (square) {
     return {
@@ -26,6 +26,7 @@ function Hamster (maze, start, dna) {
 
   this.pos = squarePos(this.currentSquare)
 
+  // dont allow hamsters to go backwards
   this.backwards = function () {
     switch (this.currentDirection) {
       case maze.directions.UP:
@@ -39,6 +40,7 @@ function Hamster (maze, start, dna) {
     }
   }
 
+  // ror drawing them facing forward
   this.rotation = function () {
     switch (this.currentDirection) {
       case maze.directions.UP:
@@ -101,20 +103,22 @@ function Hamster (maze, start, dna) {
     this.drawHamster(this.pos.x, this.pos.y, this.rotation())
   }
 
+  // when tween to next square is complete
+  // figure out
   this.onArrive = function (square) {
-    this.currentTurn += 1
     this.currentSquare = square
     this.pos = squarePos(this.currentSquare)
     let dir = false
 
     if (this.turns[this.currentSquare]) {
+      // use existing turns from dna
       dir = this.turns[this.currentSquare]
     } else {
-      let potentialTurns = maze.getPotentialTurns(this.currentSquare).filter(turn => turn !== this.backwards())
+      let potentialTurns = maze.getPotentialTurns(this.currentSquare).filter(turn => turn !== this.backwards()) // cant go backwards
       if (potentialTurns) {
         dir = potentialTurns[floor(random(potentialTurns.length))]
         if (potentialTurns.length > 1) {
-          // intersection
+          // intersection means new turn
           this.turns[this.currentSquare] = dir
         }
 
@@ -130,8 +134,8 @@ function Hamster (maze, start, dna) {
     }
   }
 
+  // just return the value of the closest the last turn made was to the cheese
   this.calcFitness = function () {
-
     let minTurnVal = maze.tiles[mazeMap.start].value
     for (const turn in this.turns) {
       if (maze.tiles[turn].value < minTurnVal) {
@@ -142,6 +146,7 @@ function Hamster (maze, start, dna) {
     return minTurnVal
   }
 
+  // tween to next tile
   this.gotoSquare = function (nextSquare) {
     var squareTween = new Tween({
       duration: this.speed,

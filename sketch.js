@@ -55,7 +55,7 @@ function restartHamsters () {
     if (maze.tiles[papa.currentSquare].value !== 1) {
       delete turnsCopy[minTurn]
     }
-    hamsters.push(new Hamster(maze, mazeMap.start, Object.assign(mama, {turns: turnsCopy})))
+    hamsters.push(new Hamster(maze, mazeMap.start, Object.assign({}, mama, {turns: turnsCopy})))
   }
 
   generation += 1
